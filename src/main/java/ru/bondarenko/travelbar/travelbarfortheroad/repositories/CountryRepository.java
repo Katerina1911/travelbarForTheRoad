@@ -14,7 +14,10 @@ public interface CountryRepository extends JpaRepository<Country, Integer> {
     Optional<Country> findByCountry(String country);
 
 
-
-    @Query("SELECT new ru.bondarenko.travelbar.travelbarfortheroad.DTO.CountryDTO (u.country) FROM Country u")
+  /**  @Query("SELECT new ru.bondarenko.travelbar.travelbarfortheroad.DTO.CountryDTO (u.country) FROM Country u")
     List<CountryDTO> findAllCountries();
+}*/
+
+@Query("SELECT new ru.bondarenko.travelbar.travelbarfortheroad.models.Country (u.country) FROM Country u")
+List<Country> findAllCountries();
 }

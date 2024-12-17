@@ -7,6 +7,8 @@ import ru.bondarenko.travelbar.travelbarfortheroad.DTO.CityDTO;
 
 import java.util.List;
 
+import static jakarta.persistence.FetchType.LAZY;
+
 
 @Entity
 @Table (name = "country")
@@ -21,7 +23,7 @@ public class Country {
     @Column(name = "country")
     private String country;
 
-    @OneToMany(mappedBy = "country")
+    @OneToMany(mappedBy = "country", fetch = LAZY)
     private List<City> cities;
 
     public Country() {

@@ -22,27 +22,43 @@ import java.util.*;
 @Service
 public class CountryService {
 
-    private static CountryRepository countryRepository = null;
-    private final CityRepository cityRepository;
-    private ModelMapper modelMapper;
+    private final CountryRepository countryRepository;
 
     @Autowired
     public CountryService(CountryRepository countryRepository, CityRepository cityRepository) {
         this.countryRepository = countryRepository;
-        this.cityRepository = cityRepository;
     }
 
-    public List<CountryDTO> allCountries () {
+    public List<Country> allCountries () {
         return countryRepository.findAllCountries();
     }
 
-   public static Map<CountryDTO, List<CityDTO>> allCountriesAndCities() {
+    public Map<Country, List<City>> allCountriesAndCities() {
+        Map<Country, List<City>> info = new HashMap<>();
+        for (Country country : countryRepository.findAll()) {
+            info.put(country, country.getCities());
+        }
+        return info;
+    }
+
+
+
+
+    /**public static Map<Country, List<City>> allCountriesAndCities() {
+        Map<Country, List<City>> info = new HashMap<>();
+        for (Country country : countryRepository.findAll()) {
+            info.put(country, country.getCities());
+        }
+        return info;
+    }*/
+
+   /**public static Map<CountryDTO, List<CityDTO>> allCountriesAndCities() {
         Map<CountryDTO, List<CityDTO>> info = new HashMap<>();
         for (CountryDTO country : countryRepository.findAllCountries()) {
             info.put(country, country.getCities());
         }
         return info;
-    }
+    }*/
 
     /**public static Map<CountryDTO, CityDTO> allCountriesAndCities() {
         Map<CountryDTO, CityDTO> info = new HashMap<>();

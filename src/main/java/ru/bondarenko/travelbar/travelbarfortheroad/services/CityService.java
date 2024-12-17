@@ -17,7 +17,7 @@ import java.util.Map;
 @Service
 public class CityService {
 
-    private static CityRepository cityRepository = null;
+    private final CityRepository cityRepository;
     private final CountryRepository countryRepository;
 
     @Autowired
@@ -26,8 +26,8 @@ public class CityService {
         this.countryRepository = countryRepository;
     }
 
-    public static List<CityDTO> allCities() {
-        return cityRepository.findAllCities();
+    public List<City> allCities() {
+        return cityRepository.findAll();
     }
 
 }

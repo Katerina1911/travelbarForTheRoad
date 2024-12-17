@@ -1,5 +1,6 @@
 package ru.bondarenko.travelbar.travelbarfortheroad.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
@@ -34,6 +35,7 @@ public class City {
     @JoinColumn (name = "country_id", referencedColumnName = "id")
     private Country country;
 
+    @JsonIgnore
     public Country getCountry() {
         return country;
     }

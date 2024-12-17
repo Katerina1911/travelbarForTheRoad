@@ -14,6 +14,12 @@ import java.util.Optional;
 public interface CityRepository extends JpaRepository<City, Integer> {
     Optional<City> findByCity(String city);
 
-    @Query("SELECT new ru.bondarenko.travelbar.travelbarfortheroad.DTO.CityDTO (u.city) FROM City u")
-    List<CityDTO> findAllCities();
-}
+
+
+
+ /**@Query("SELECT new ru.bondarenko.travelbar.travelbarfortheroad.models.City (u.city) FROM City u")
+ List<City> findAllCities();*/
+
+ }
+
+

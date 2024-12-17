@@ -1,5 +1,6 @@
 package ru.bondarenko.travelbar.travelbarfortheroad.controllers;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +16,7 @@ import ru.bondarenko.travelbar.travelbarfortheroad.services.CountryService;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 public class CityController {
@@ -28,10 +30,25 @@ public class CityController {
         this.countryService = countryService;
     }
 
-    @GetMapping("/showAllCities")
+    @GetMapping("/showAllCities") // null
     @ResponseBody
     public List<CityDTO> showAllCities() {
-        return CityService.allCities();
+        return cityService.allCities().stream().map(this::convertToCityDTO)
+                .collect(Collectors.toList());
+    }
+
+
+
+
+
+    public CityDTO convertToCityDTO (City city) {
+        ModelMapper modelMapper = new ModelMapper();
+        return modelMapper.map(city, CityDTO.class);
+    }
+
+    public City convertToCity(CityDTO cityDTO) {
+        ModelMapper modelMapper = new ModelMapper();
+        return modelMapper.map(cityDTO, City.class);
     }
 
 }
