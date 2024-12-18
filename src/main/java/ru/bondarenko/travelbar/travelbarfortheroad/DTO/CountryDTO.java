@@ -1,5 +1,7 @@
 package ru.bondarenko.travelbar.travelbarfortheroad.DTO;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Column;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
@@ -22,7 +24,6 @@ public class CountryDTO {
     public CountryDTO() {
     }
 
-
     public CountryDTO(String country) {
         this.country = country;
     }
@@ -35,22 +36,25 @@ public class CountryDTO {
         this.country = country;
     }
 
-//   @OneToMany(mappedBy = "country", fetch = LAZY)     // ДОБАВЛЯЮТСЯ ГОРОДА NULL ПРИ ПОИСКЕ ВСЕХ СТРАН
-/*  private List<City> cities;
+  private List<CityDTO> cities;
 
-    public List<City> getCities() {
+    @JsonCreator
+    public CountryDTO(@JsonProperty("cities") List<CityDTO> cities) {
+        this.cities = cities;
+    }
+
+    public List<CityDTO> getCities() {
         return cities;
     }
 
-    public void setCities(List<City> cities) {
+    public void setCities(List<CityDTO> cities) {
         this.cities = cities;
-    }*/
+    }
 
     @Override
     public String toString() {
         return "CountryDTO{" +
                 "country='" + country + '\'' +
-               // ", cities=" + cities +
                 '}';
     }
 }

@@ -1,21 +1,16 @@
 package ru.bondarenko.travelbar.travelbarfortheroad.controllers;
 
-import io.micrometer.observation.ObservationFilter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import ru.bondarenko.travelbar.travelbarfortheroad.DTO.CityDTO;
 import ru.bondarenko.travelbar.travelbarfortheroad.DTO.CountryDTO;
 import ru.bondarenko.travelbar.travelbarfortheroad.models.City;
 import ru.bondarenko.travelbar.travelbarfortheroad.models.Country;
-import ru.bondarenko.travelbar.travelbarfortheroad.repositories.CityRepository;
 import ru.bondarenko.travelbar.travelbarfortheroad.services.CountryService;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Controller
@@ -28,24 +23,41 @@ private final CountryService countryService;
         this.countryService = countryService;
     }
 
-    @GetMapping("/showAllCountries")
+   /** @GetMapping("/countries")
     @ResponseBody
-    public List<CountryDTO> showAllCountries () {
-        return countryService.allCountries().stream().map(this::convertToCountryDTO)
-                .collect(Collectors.toList());
+    public List<Country> getAllCountries() {
+        return countryService.getAll();
     }
 
-    @GetMapping("/showAllCountriesAndCities")     // не работает
+    @GetMapping("/countries/{countryId}")
     @ResponseBody
-    public Map<Country, List<City>> showAllCountriesAndCities () {
-        return countryService.allCountriesAndCities();
+    public Country getCountryById(@PathVariable("countryId") int id) {
+        return countryService.getById(id);
     }
 
-   /** @GetMapping("/showAllCountriesAndCities")     // не работает
-    @ResponseBody
-    public Map<Country, List<City>> showAllCountriesAndCities () {
-        return CountryService.allCountriesAndCities();
+    @PostMapping("/countries")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Country createCountry(@RequestBody Country country) {
+        return countryService.create(country);
     }*/
+
+
+    @GetMapping("/showAllCountriesAndCities")
+      @ResponseBody
+      public List<CountryDTO> showAllCountriesAndCities () {
+          return countryService.allCountriesAndCities().stream().map(this::convertToCountryDTO)
+                  .collect(Collectors.toList());
+      }
+
+      @GetMapping("/showAllCountries")     // показывает города
+      @ResponseBody
+      public List<CountryDTO> showAllCountries () {
+          return countryService.allCountries().stream().map(this::convertToCountryDTO)
+                  .collect(Collectors.toList());
+      }
+
+
+
 
 
    public CountryDTO convertToCountryDTO (Country country) {

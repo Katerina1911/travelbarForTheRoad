@@ -1,5 +1,7 @@
 package ru.bondarenko.travelbar.travelbarfortheroad.models;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
@@ -45,6 +47,11 @@ public class Country {
         return id;
     }
 
+    @JsonCreator
+    public Country(@JsonProperty("cities") List<City> cities) {
+        this.cities = cities;
+    }
+
     @Override
     public String toString() {
         return "Country{" +
@@ -52,6 +59,7 @@ public class Country {
                 ", country='" + country + '\'' +
                 '}';
     }
+
 
     public List<City> getCities() {
         return cities;

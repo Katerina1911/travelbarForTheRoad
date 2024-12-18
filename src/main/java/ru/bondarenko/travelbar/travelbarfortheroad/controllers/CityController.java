@@ -37,10 +37,6 @@ public class CityController {
                 .collect(Collectors.toList());
     }
 
-
-
-
-
     public CityDTO convertToCityDTO (City city) {
         ModelMapper modelMapper = new ModelMapper();
         return modelMapper.map(city, CityDTO.class);

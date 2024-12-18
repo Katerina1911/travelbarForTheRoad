@@ -44,6 +44,22 @@ public class City {
         this.country = country;
     }
 
+    public @NotEmpty(message = "Название города не должно быть пустым") @Size(min = 2, max = 100, message = "Название города должно быть от 2 до 100 символов длиной") String getCity() {
+        return city;
+    }
+
+    public void setCity(@NotEmpty(message = "Название города не должно быть пустым") @Size(min = 2, max = 100, message = "Название города должно быть от 2 до 100 символов длиной") String city) {
+        this.city = city;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     @Override
     public String toString() {
         return "City{" +
