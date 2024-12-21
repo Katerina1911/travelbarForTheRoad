@@ -1,5 +1,6 @@
 package ru.bondarenko.travelbar.travelbarfortheroad.DTO;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.Column;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
@@ -9,7 +10,7 @@ import jakarta.validation.constraints.Size;
 import ru.bondarenko.travelbar.travelbarfortheroad.models.Country;
 
 
-
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class CityDTO {
 
     @NotEmpty(message = "Название города не должно быть пустым")
@@ -43,9 +44,8 @@ public class CityDTO {
 
     @Override
     public String toString() {
-        return "CityDTO{" +
-                "city='" + city + '\'' +
-             //   ", country=" + country +
-                '}';
+        return "city=" + city + '}';
     }
+
+
 }

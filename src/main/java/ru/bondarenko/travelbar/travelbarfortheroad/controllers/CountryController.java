@@ -1,66 +1,171 @@
 package ru.bondarenko.travelbar.travelbarfortheroad.controllers;
 
+import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
-import ru.bondarenko.travelbar.travelbarfortheroad.DTO.CityDTO;
-import ru.bondarenko.travelbar.travelbarfortheroad.DTO.CountryDTO;
-import ru.bondarenko.travelbar.travelbarfortheroad.models.City;
-import ru.bondarenko.travelbar.travelbarfortheroad.models.Country;
+import ru.bondarenko.travelbar.travelbarfortheroad.DTO.*;
+import ru.bondarenko.travelbar.travelbarfortheroad.models.*;
+import ru.bondarenko.travelbar.travelbarfortheroad.services.CountryDTOService;
 import ru.bondarenko.travelbar.travelbarfortheroad.services.CountryService;
 
+
+import ru.bondarenko.travelbar.travelbarfortheroad.util.AppErrorResponse;
+import ru.bondarenko.travelbar.travelbarfortheroad.util.CountryNotCreatedException;
+import ru.bondarenko.travelbar.travelbarfortheroad.util.CountryNotFoundException;
+
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
-@Controller
+@RestController
 public class CountryController {
 
-private final CountryService countryService;
+    private final CountryService countryService;
+    private final CountryDTOService countryDTOService;
 
     @Autowired
-    public CountryController(CountryService countryService) {
+    public CountryController(CountryService countryService, CountryDTOService countryDTOService) {
         this.countryService = countryService;
+        this.countryDTOService = countryDTOService;
     }
 
-   /** @GetMapping("/countries")
-    @ResponseBody
-    public List<Country> getAllCountries() {
-        return countryService.getAll();
+    @GetMapping("/countries")
+    public List<String> getAllCountries() {
+        return countryService.allCountries();
     }
 
-    @GetMapping("/countries/{countryId}")
-    @ResponseBody
-    public Country getCountryById(@PathVariable("countryId") int id) {
-        return countryService.getById(id);
+    @GetMapping("/country/{id}")
+    public CountryDTO getCountry(@PathVariable("id")int id) {
+        return countryDTOService.countryDTOAll(countryService.findOneCountry(id));
     }
 
-    @PostMapping("/countries")
-    @ResponseStatus(HttpStatus.CREATED)
-    public Country createCountry(@RequestBody Country country) {
-        return countryService.create(country);
-    }*/
+////////////////////////
+
+    @PostMapping("/createCountryMenu")
+    public ResponseEntity<HttpStatus> create(@RequestBody @Valid CountryDTO countryDTO, // или вернуть объект страна
+                                             BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            StringBuilder errorMsg =new StringBuilder();
+
+            List<FieldError> errors = bindingResult.getFieldErrors();
+            for (FieldError error : errors) {
+                errorMsg.append(error.getField())
+                        .append(" - ").append(error.getDefaultMessage())
+                        .append(";");
+            }
+            throw new CountryNotCreatedException(errors.toString());
+        }
+        countryService.saveCountryMenu(countryDTOService.convertCountryDTOAll(countryDTO));   // заменить дто
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    @PatchMapping("/updateCountryMenu")
+    public ResponseEntity<HttpStatus> updateCountry(@ModelAttribute("country") @Valid CountryDTO countryDTO,
+                                                    BindingResult bindingResult,
+                                                    @PathVariable("id") int id) {
+        if (bindingResult.hasErrors()) {
+            StringBuilder errorMsg =new StringBuilder();
+
+            List<FieldError> errors = bindingResult.getFieldErrors();
+            for (FieldError error : errors) {
+                errorMsg.append(error.getField())
+                        .append(" - ").append(error.getDefaultMessage())
+                        .append(";");
+            }
+            throw new CountryNotCreatedException(errors.toString());
+        }
+        countryService.updateCountryMenu(id, countryDTOService.convertCountryDTOAll(countryDTO));
+        // заменить дто
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    @DeleteMapping("/deleteCountryMenu")
+    public void deleteCountry(@PathVariable("id") int id) {
+        countryService.deleteCountryMenu(id);
+    }
+////////////////////
 
 
-    @GetMapping("/showAllCountriesAndCities")
-      @ResponseBody
+
+
+
+
+
+
+
+    /**@GetMapping("/showAllCountriesAndCities")
       public List<CountryDTO> showAllCountriesAndCities () {
-          return countryService.allCountriesAndCities().stream().map(this::convertToCountryDTO)
+          return countryService.allCountriesAndCities().stream().map(countryDTOService::convertToCountryDTO)
                   .collect(Collectors.toList());
+      }*/
+
+   // @GetMapping("/showAllCountriesAndCities")
+   // public List<List<Country>> showAllCountriesAndCities () {
+   //     return countryService.allCountriesAndCities();
+    // }
+
+    @GetMapping("/showAllMenu")     // показывает города
+    public List<CountryDTO> showAllMenu () {
+        return countryService.allMenu().stream().map(countryDTOService::countryDTOAll)
+                .collect(Collectors.toList());
+    }
+
+    @GetMapping("/showAllCountriesAndDinners")
+    public Map<String, DinnerDTO> showAllCountriesAndDinners () {
+        return countryDTOService.convertToCountryAndDinnerDTO(countryService.allCountriesAndDinners());
+    }
+
+    @GetMapping("/showAllCountriesMenu")
+    public List<CountryDTO> showAllCountriesMenu() {
+        return countryService.allCountriesSnackDrinks().stream().map(countryDTOService::countryDTOAllCountriesMenu)
+                .collect(Collectors.toList());
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      @ExceptionHandler
+      private ResponseEntity<AppErrorResponse> handleException(CountryNotFoundException e) {
+          AppErrorResponse response = new AppErrorResponse(
+                  "Страны с таким id не найдено",
+                  System.currentTimeMillis()
+          );
+          return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
       }
 
-      @GetMapping("/showAllCountries")     // показывает города
-      @ResponseBody
-      public List<CountryDTO> showAllCountries () {
-          return countryService.allCountries().stream().map(this::convertToCountryDTO)
-                  .collect(Collectors.toList());
-      }
+    @ExceptionHandler
+    private ResponseEntity<AppErrorResponse> handleException(CountryNotCreatedException e) {
+        AppErrorResponse response = new AppErrorResponse(
+                e.getMessage(),
+                System.currentTimeMillis()
+        );
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
 
 
 
 
 
-   public CountryDTO convertToCountryDTO (Country country) {
+
+
+  /** public CountryDTO convertToCountryDTO (Country country) {
         ModelMapper modelMapper = new ModelMapper();
        return modelMapper.map(country, CountryDTO.class);
     }
@@ -78,6 +183,6 @@ private final CountryService countryService;
         public City convertToCity(CityDTO cityDTO) {
             ModelMapper modelMapper = new ModelMapper();
             return modelMapper.map(cityDTO, City.class);
-        }
+        }*/
 
 }

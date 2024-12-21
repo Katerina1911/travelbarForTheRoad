@@ -9,6 +9,7 @@ import ru.bondarenko.travelbar.travelbarfortheroad.DTO.CityDTO;
 import ru.bondarenko.travelbar.travelbarfortheroad.DTO.CountryDTO;
 import ru.bondarenko.travelbar.travelbarfortheroad.models.City;
 import ru.bondarenko.travelbar.travelbarfortheroad.models.Country;
+import ru.bondarenko.travelbar.travelbarfortheroad.services.CityDTOService;
 import ru.bondarenko.travelbar.travelbarfortheroad.services.CityService;
 import ru.bondarenko.travelbar.travelbarfortheroad.services.CountryService;
 
@@ -22,22 +23,26 @@ import java.util.stream.Collectors;
 public class CityController {
 
     private final CityService cityService;
-    private final CountryService countryService;
+    private final CityDTOService cityDTOService;
 
     @Autowired
-    public CityController(CityService cityService, CountryService countryService) {
+    public CityController(CityService cityService, CityDTOService cityDTOService) {
         this.cityService = cityService;
-        this.countryService = countryService;
+        this.cityDTOService = cityDTOService;
     }
 
-    @GetMapping("/showAllCities") // null
+    @GetMapping("/showAllCities")
     @ResponseBody
     public List<CityDTO> showAllCities() {
-        return cityService.allCities().stream().map(this::convertToCityDTO)
+        return cityService.allCities().stream().map(cityDTOService::convertToCityDTO)
                 .collect(Collectors.toList());
     }
 
-    public CityDTO convertToCityDTO (City city) {
+
+
+
+
+   /** public CityDTO convertToCityDTO (City city) {
         ModelMapper modelMapper = new ModelMapper();
         return modelMapper.map(city, CityDTO.class);
     }
@@ -45,7 +50,7 @@ public class CityController {
     public City convertToCity(CityDTO cityDTO) {
         ModelMapper modelMapper = new ModelMapper();
         return modelMapper.map(cityDTO, City.class);
-    }
+    }*/
 
 }
 

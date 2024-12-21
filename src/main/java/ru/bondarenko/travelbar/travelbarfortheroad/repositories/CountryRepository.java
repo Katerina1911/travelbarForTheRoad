@@ -11,9 +11,8 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-@Transactional
 public interface CountryRepository extends JpaRepository<Country, Integer> {
-    Optional<Country> findByCountry(String country);
+    List<Country> findByCountry(String country);
 
 @Query("SELECT new ru.bondarenko.travelbar.travelbarfortheroad.models.Country (u.country) FROM Country u")
 List<Country> findAllCountries();
